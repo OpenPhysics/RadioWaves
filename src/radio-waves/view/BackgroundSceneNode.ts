@@ -3,11 +3,16 @@
  *
  * Paints a hand-drawn landscape behind the simulation. The antenna art is aligned from the
  * model's antenna endpoints so the background stays registered with the interactive electrons.
+ *
+ * All colors come from RadioWavesColors (ProfileColorProperty) rather than being hard-coded here,
+ * so the landscape palette is centralized and theme-able; the node repaints when the palette changes.
  */
 
+import { Multilink } from "scenerystack/axon";
 import type { Bounds2 } from "scenerystack/dot";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { CanvasNode } from "scenerystack/scenery";
+import RadioWavesColors from "../../RadioWavesColors.js";
 import type { RadioWavesModel } from "../model/RadioWavesModel.js";
 
 type ModelPoint = { x: number; y: number };
@@ -22,6 +27,28 @@ export default class BackgroundSceneNode extends CanvasNode {
     this.model = model;
     this.modelViewTransform = modelViewTransform;
     this.sceneBounds = canvasBounds;
+
+    // Repaint when the (theme-able) scene palette changes. The background node lives for the lifetime
+    // of the ScreenView (never removed from the scene graph), so this link is intentionally not disposed.
+    Multilink.multilinkAny(
+      [
+        RadioWavesColors.sceneSkyTopProperty,
+        RadioWavesColors.sceneSkyBottomProperty,
+        RadioWavesColors.sceneInkProperty,
+        RadioWavesColors.sceneStructureLightProperty,
+        RadioWavesColors.sceneMountainFarProperty,
+        RadioWavesColors.sceneMountainNearProperty,
+        RadioWavesColors.sceneHillBackProperty,
+        RadioWavesColors.sceneHillFrontProperty,
+        RadioWavesColors.sceneWireProperty,
+        RadioWavesColors.sceneTransmitterBuildingProperty,
+        RadioWavesColors.sceneReceiverRoofProperty,
+        RadioWavesColors.sceneReceiverBuildingProperty,
+        RadioWavesColors.sceneAntennaArtFillProperty,
+        RadioWavesColors.sceneAntennaArtHighlightProperty,
+      ],
+      () => this.invalidatePaint(),
+    );
   }
 
   public override paintCanvas(context: CanvasRenderingContext2D): void {
@@ -44,19 +71,20 @@ export default class BackgroundSceneNode extends CanvasNode {
   private paintSky(context: CanvasRenderingContext2D): void {
     const bounds = this.sceneBounds;
     const gradient = context.createLinearGradient(0, bounds.minY, 0, bounds.maxY);
-    gradient.addColorStop(0, "#9dcfff");
-    gradient.addColorStop(1, "#c9e4ff");
+    gradient.addColorStop(0, RadioWavesColors.sceneSkyTopProperty.value.toCSS());
+    gradient.addColorStop(1, RadioWavesColors.sceneSkyBottomProperty.value.toCSS());
     context.fillStyle = gradient;
     context.fillRect(bounds.minX, bounds.minY, bounds.width, bounds.height);
 
-    context.fillStyle = "#ffffff";
-    context.strokeStyle = "#111111";
+    context.fillStyle = RadioWavesColors.sceneStructureLightProperty.value.toCSS();
+    context.strokeStyle = RadioWavesColors.sceneInkProperty.value.toCSS();
     context.lineWidth = 2;
     this.paintCloud(context, 62, 110, 34);
     this.paintCloud(context, 120, 345, 25);
   }
 
   private paintMountains(context: CanvasRenderingContext2D): void {
+    const ink = RadioWavesColors.sceneInkProperty.value.toCSS();
     this.fillModelPolygon(
       context,
       [
@@ -75,8 +103,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 1000, y: 700 },
         { x: 0, y: 700 },
       ],
-      "#d9d9d1",
-      "#111111",
+      RadioWavesColors.sceneMountainFarProperty.value.toCSS(),
+      ink,
     );
 
     this.fillModelPolygon(
@@ -96,8 +124,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 1000, y: 700 },
         { x: 0, y: 700 },
       ],
-      "#777061",
-      "#111111",
+      RadioWavesColors.sceneMountainNearProperty.value.toCSS(),
+      ink,
     );
 
     this.fillModelPolygon(
@@ -110,12 +138,13 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 185, y: 488 },
         { x: 170, y: 460 },
       ],
-      "#ffffff",
-      "#111111",
+      RadioWavesColors.sceneStructureLightProperty.value.toCSS(),
+      ink,
     );
   }
 
   private paintHills(context: CanvasRenderingContext2D): void {
+    const ink = RadioWavesColors.sceneInkProperty.value.toCSS();
     this.fillModelPolygon(
       context,
       [
@@ -132,8 +161,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 1000, y: 700 },
         { x: 0, y: 700 },
       ],
-      "#8a865d",
-      "#111111",
+      RadioWavesColors.sceneHillBackProperty.value.toCSS(),
+      ink,
     );
 
     this.fillModelPolygon(
@@ -147,8 +176,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 1000, y: 455 },
         { x: 1000, y: 700 },
       ],
-      "#2da22a",
-      "#111111",
+      RadioWavesColors.sceneHillFrontProperty.value.toCSS(),
+      ink,
     );
   }
 
@@ -157,12 +186,13 @@ export default class BackgroundSceneNode extends CanvasNode {
     context.beginPath();
     context.moveTo(this.sceneBounds.minX, y);
     context.lineTo(this.sceneBounds.maxX, y);
-    context.strokeStyle = "#d00000";
+    context.strokeStyle = RadioWavesColors.sceneWireProperty.value.toCSS();
     context.lineWidth = 2;
     context.stroke();
   }
 
   private paintTransmitterStation(context: CanvasRenderingContext2D): void {
+    const ink = RadioWavesColors.sceneInkProperty.value.toCSS();
     this.fillModelPolygon(
       context,
       [
@@ -170,8 +200,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 108, y: 575 },
         { x: 165, y: 625 },
       ],
-      "#111111",
-      "#111111",
+      ink,
+      ink,
     );
     this.fillModelPolygon(
       context,
@@ -181,8 +211,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 150, y: 700 },
         { x: 78, y: 700 },
       ],
-      "#bdad19",
-      "#111111",
+      RadioWavesColors.sceneTransmitterBuildingProperty.value.toCSS(),
+      ink,
     );
     this.fillModelPolygon(
       context,
@@ -192,12 +222,13 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 146, y: 700 },
         { x: 133, y: 700 },
       ],
-      "#ffffff",
-      "#111111",
+      RadioWavesColors.sceneStructureLightProperty.value.toCSS(),
+      ink,
     );
   }
 
   private paintReceiverStation(context: CanvasRenderingContext2D): void {
+    const ink = RadioWavesColors.sceneInkProperty.value.toCSS();
     this.fillModelPolygon(
       context,
       [
@@ -205,8 +236,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 735, y: 430 },
         { x: 785, y: 470 },
       ],
-      "#555555",
-      "#111111",
+      RadioWavesColors.sceneReceiverRoofProperty.value.toCSS(),
+      ink,
     );
     this.fillModelPolygon(
       context,
@@ -216,8 +247,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 770, y: 515 },
         { x: 705, y: 515 },
       ],
-      "#f47c00",
-      "#111111",
+      RadioWavesColors.sceneReceiverBuildingProperty.value.toCSS(),
+      ink,
     );
     this.fillModelPolygon(
       context,
@@ -227,8 +258,8 @@ export default class BackgroundSceneNode extends CanvasNode {
         { x: 729, y: 515 },
         { x: 716, y: 515 },
       ],
-      "#ffffff",
-      "#111111",
+      RadioWavesColors.sceneStructureLightProperty.value.toCSS(),
+      ink,
     );
   }
 
@@ -238,7 +269,7 @@ export default class BackgroundSceneNode extends CanvasNode {
     context.beginPath();
     context.moveTo(p1.x, p1.y);
     context.lineTo(p2.x, p2.y);
-    context.strokeStyle = "#a4aab0";
+    context.strokeStyle = RadioWavesColors.sceneAntennaArtFillProperty.value.toCSS();
     context.lineWidth = 9;
     context.lineCap = "round";
     context.stroke();
@@ -246,7 +277,7 @@ export default class BackgroundSceneNode extends CanvasNode {
     context.beginPath();
     context.moveTo(p1.x - 2, p1.y);
     context.lineTo(p2.x - 2, p2.y);
-    context.strokeStyle = "#e7ecef";
+    context.strokeStyle = RadioWavesColors.sceneAntennaArtHighlightProperty.value.toCSS();
     context.lineWidth = 2;
     context.stroke();
   }
