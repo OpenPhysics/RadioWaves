@@ -1,7 +1,7 @@
 {
   "name": "radio-waves",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.9.0",
   "type": "module",
   "description": "SceneryStack port of the PhET 'Radio Waves & Electromagnetic Fields' simulation, rebuilt from the legacy PIXI.js + Backbone version. Wiggle an electron and watch EM radiation propagate.",
   "license": "AGPL-3.0-or-later",
