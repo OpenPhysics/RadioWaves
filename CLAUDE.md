@@ -17,7 +17,7 @@ SceneryStack port of the PhET *Radio Waves & Electromagnetic Fields* simulation 
 
 ## Accessibility
 
-Follows the shared [OpenPhysics accessibility convention](https://github.com/OpenPhysics/OpenPhysics/blob/main/ACCESSIBILITY.md).
+Follows the shared [OpenPhysics accessibility convention](https://github.com/OpenPhysics/Baton/blob/main/ACCESSIBILITY.md).
 `RadioWavesScreenView` registers `RadioWavesScreenSummaryContent` (live current-details:
 transmitter frequency + amplitude) via the `screenSummaryContent` super-option, and orders the
 PDOM through a wrapper `Node`. A11y strings live under the top-level `a11y` key in each locale
