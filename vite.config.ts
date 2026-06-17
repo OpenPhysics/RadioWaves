@@ -124,7 +124,7 @@ export default defineConfig(({ mode }) => {
     // So the build can be served from an arbitrary path
     base: "./",
     build: {
-      // Requires Vite 8+ / esbuild ≥0.24. Run `npm ci` if build errors on ES2024.
+      // Requires Vite 8+ / esbuild ≥0.24. Run `bun install` if build errors on ES2024.
       target: "es2024",
       ...(single && {
         // Inline every imported asset as a base64 data URI instead of emitting files.

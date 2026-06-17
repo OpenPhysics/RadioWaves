@@ -2,7 +2,7 @@
  * generate-icons.ts
  *
  * Rasterizes public/icons/icon.svg into the PNG icons and favicon.ico used by the PWA.
- * Run with: npm run icons
+ * Run with: bun run icons
  */
 
 import { readFileSync, writeFileSync } from "node:fs";

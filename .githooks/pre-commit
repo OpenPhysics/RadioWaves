@@ -1,11 +1,11 @@
 #!/bin/sh
 # Pre-commit hook: auto-format and lint with Biome.
-# Activated by: npm install (prepare script sets core.hooksPath)
+# Activated by: bun install (prepare script sets core.hooksPath)
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 if [ ! -x node_modules/.bin/biome ]; then
-  echo "pre-commit: skipping — run npm install first."
+  echo "pre-commit: skipping — run bun install first."
   exit 0
 fi
 
@@ -17,7 +17,7 @@ fi
 
 echo "Running Biome fix on staged files..."
 
-npm run fix -- --no-errors-on-unmatched
+bun run fix -- --no-errors-on-unmatched
 STATUS=$?
 
 printf '%s\n' "$STAGED" | while IFS= read -r file; do
