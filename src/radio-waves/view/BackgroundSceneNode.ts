@@ -40,6 +40,7 @@ export default class BackgroundSceneNode extends CanvasNode {
         RadioWavesColors.sceneMountainNearProperty,
         RadioWavesColors.sceneHillBackProperty,
         RadioWavesColors.sceneHillFrontProperty,
+        RadioWavesColors.sceneTreesProperty,
         RadioWavesColors.sceneWireProperty,
         RadioWavesColors.sceneTransmitterBuildingProperty,
         RadioWavesColors.sceneReceiverRoofProperty,
@@ -70,17 +71,94 @@ export default class BackgroundSceneNode extends CanvasNode {
 
   private paintSky(context: CanvasRenderingContext2D): void {
     const bounds = this.sceneBounds;
+    const W = bounds.width;
+    const H = bounds.height;
+
     const gradient = context.createLinearGradient(0, bounds.minY, 0, bounds.maxY);
     gradient.addColorStop(0, RadioWavesColors.sceneSkyTopProperty.value.toCSS());
     gradient.addColorStop(1, RadioWavesColors.sceneSkyBottomProperty.value.toCSS());
     context.fillStyle = gradient;
-    context.fillRect(bounds.minX, bounds.minY, bounds.width, bounds.height);
+    context.fillRect(bounds.minX, bounds.minY, W, H);
 
-    context.fillStyle = RadioWavesColors.sceneStructureLightProperty.value.toCSS();
-    context.strokeStyle = RadioWavesColors.sceneInkProperty.value.toCSS();
-    context.lineWidth = 2;
-    this.paintCloud(context, 62, 110, 34);
-    this.paintCloud(context, 120, 345, 25);
+    // Sun in the upper-right of the sky, painted before clouds so clouds overlap it naturally
+    this.paintSun(context, W * 0.70, H * 0.09);
+
+    // Fluffy cumulus clouds at varied depths (opacity signals distance)
+    this.paintCloud(context, W * 0.06, H * 0.14, W * 0.048);
+    this.paintCloud(context, W * 0.29, H * 0.08, W * 0.042);
+    this.paintCloud(context, W * 0.52, H * 0.17, W * 0.036, 0.88);
+    this.paintCloud(context, W * 0.17, H * 0.37, W * 0.030, 0.72);
+    this.paintCloud(context, W * 0.43, H * 0.31, W * 0.026, 0.65);
+  }
+
+  private paintSun(context: CanvasRenderingContext2D, x: number, y: number): void {
+    const r = 20;
+
+    // Wide atmospheric glow
+    const outerGlow = context.createRadialGradient(x, y, r, x, y, r * 4.5);
+    outerGlow.addColorStop(0, "rgba(255, 248, 160, 0.38)");
+    outerGlow.addColorStop(0.45, "rgba(255, 240, 130, 0.10)");
+    outerGlow.addColorStop(1, "rgba(255, 225, 90, 0)");
+    context.beginPath();
+    context.arc(x, y, r * 4.5, 0, Math.PI * 2);
+    context.fillStyle = outerGlow;
+    context.fill();
+
+    // Inner corona / halo
+    const halo = context.createRadialGradient(x, y, r * 0.85, x, y, r * 2.2);
+    halo.addColorStop(0, "rgba(255, 255, 210, 0.75)");
+    halo.addColorStop(1, "rgba(255, 248, 160, 0)");
+    context.beginPath();
+    context.arc(x, y, r * 2.2, 0, Math.PI * 2);
+    context.fillStyle = halo;
+    context.fill();
+
+    // Sun disk with subtle centre highlight
+    const disk = context.createRadialGradient(x - r * 0.28, y - r * 0.28, 0, x, y, r);
+    disk.addColorStop(0, "#fffbcc");
+    disk.addColorStop(1, "#ffdd44");
+    context.beginPath();
+    context.arc(x, y, r, 0, Math.PI * 2);
+    context.fillStyle = disk;
+    context.fill();
+  }
+
+  private paintCloud(context: CanvasRenderingContext2D, x: number, y: number, size: number, opacity = 1.0): void {
+    context.save();
+
+    // Soft translucent shadow cast below the cloud
+    context.beginPath();
+    context.ellipse(x + size * 0.48, y + size * 0.42, size * 0.60, size * 0.12, 0, 0, Math.PI * 2);
+    context.fillStyle = `rgba(65, 90, 130, ${0.17 * opacity})`;
+    context.fill();
+
+    // Shading lobes at the base — give the cloud body and volumetric depth
+    for (const { dx, dy, r } of [
+      { dx: 0.08, dy: 0.08, r: 0.40 },
+      { dx: 0.44, dy: -0.08, r: 0.50 },
+      { dx: 0.88, dy: 0.08, r: 0.37 },
+    ]) {
+      context.beginPath();
+      context.arc(x + dx * size, y + dy * size, r * size, 0, Math.PI * 2);
+      context.fillStyle = `rgba(195, 212, 235, ${0.78 * opacity})`;
+      context.fill();
+    }
+
+    // Bright white lobes — the sunlit tops of the cumulus towers
+    for (const { dx, dy, r } of [
+      { dx: 0.00, dy: 0.00, r: 0.42 },
+      { dx: 0.38, dy: -0.30, r: 0.56 },
+      { dx: 0.80, dy: -0.10, r: 0.42 },
+      { dx: 0.96, dy: 0.04, r: 0.38 },
+      { dx: 0.50, dy: 0.06, r: 0.28 },
+    ]) {
+      context.beginPath();
+      context.arc(x + dx * size, y + dy * size, r * size, 0, Math.PI * 2);
+      context.fillStyle = `rgba(255, 255, 255, ${0.94 * opacity})`;
+      context.fill();
+    }
+
+    context.restore();
   }
 
   private paintMountains(context: CanvasRenderingContext2D): void {
@@ -128,6 +206,7 @@ export default class BackgroundSceneNode extends CanvasNode {
       ink,
     );
 
+    // Snow cap on the highest peak
     this.fillModelPolygon(
       context,
       [
@@ -179,6 +258,61 @@ export default class BackgroundSceneNode extends CanvasNode {
       RadioWavesColors.sceneHillFrontProperty.value.toCSS(),
       ink,
     );
+
+    // Pine trees on top of the hills, painted after the hill fills so they appear in front
+    this.paintTrees(context);
+  }
+
+  private paintTrees(context: CanvasRenderingContext2D): void {
+    const mvt = this.modelViewTransform;
+    const treeModelHeight = 32;
+
+    // Trees along the back hill ridge (model y ≈ 528–567)
+    const backTrees: ModelPoint[] = [
+      { x: 408, y: 567 },
+      { x: 440, y: 563 },
+      { x: 472, y: 557 },
+      { x: 505, y: 553 },
+      { x: 540, y: 545 },
+      { x: 572, y: 537 },
+      { x: 604, y: 528 },
+    ];
+
+    // Trees along the front green hill ridge (model y ≈ 436–449, right of the receiver building)
+    const frontTrees: ModelPoint[] = [
+      { x: 828, y: 449 },
+      { x: 856, y: 446 },
+      { x: 884, y: 443 },
+      { x: 912, y: 441 },
+      { x: 940, y: 438 },
+      { x: 965, y: 436 },
+    ];
+
+    for (const base of [...backTrees, ...frontTrees]) {
+      const vBase = mvt.modelToViewXY(base.x, base.y);
+      const vTip = mvt.modelToViewXY(base.x, base.y - treeModelHeight);
+      this.paintPineTree(context, vBase.x, vBase.y, vBase.y - vTip.y);
+    }
+  }
+
+  // Three-tier pine tree silhouette — widest at base, narrowest at crown.
+  private paintPineTree(context: CanvasRenderingContext2D, cx: number, baseY: number, height: number): void {
+    const w = height * 0.55;
+    context.fillStyle = RadioWavesColors.sceneTreesProperty.value.toCSS();
+
+    for (const { yTop, yBot, wFrac } of [
+      { yTop: baseY - height * 0.44, yBot: baseY, wFrac: 1.00 },
+      { yTop: baseY - height * 0.70, yBot: baseY - height * 0.30, wFrac: 0.70 },
+      { yTop: baseY - height, yBot: baseY - height * 0.58, wFrac: 0.44 },
+    ]) {
+      const hw = (w * wFrac) / 2;
+      context.beginPath();
+      context.moveTo(cx, yTop);
+      context.lineTo(cx - hw, yBot);
+      context.lineTo(cx + hw, yBot);
+      context.closePath();
+      context.fill();
+    }
   }
 
   private paintWire(context: CanvasRenderingContext2D): void {
@@ -279,18 +413,6 @@ export default class BackgroundSceneNode extends CanvasNode {
     context.lineTo(p2.x - 2, p2.y);
     context.strokeStyle = RadioWavesColors.sceneAntennaArtHighlightProperty.value.toCSS();
     context.lineWidth = 2;
-    context.stroke();
-  }
-
-  private paintCloud(context: CanvasRenderingContext2D, x: number, y: number, size: number): void {
-    context.beginPath();
-    context.arc(x, y, size * 0.45, Math.PI, 0);
-    context.arc(x + size * 0.38, y - size * 0.28, size * 0.55, Math.PI, 0);
-    context.arc(x + size * 0.95, y, size * 0.45, Math.PI, 0);
-    context.lineTo(x + size * 1.25, y + size * 0.22);
-    context.lineTo(x - size * 0.25, y + size * 0.22);
-    context.closePath();
-    context.fill();
     context.stroke();
   }
 
