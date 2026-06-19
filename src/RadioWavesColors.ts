@@ -56,6 +56,7 @@ const RadioWavesColors = {
   sceneMountainNearProperty: profileColor("sceneMountainNear", "#777061", "#777061"),
   sceneHillBackProperty: profileColor("sceneHillBack", "#8a865d", "#8a865d"),
   sceneHillFrontProperty: profileColor("sceneHillFront", "#28b038", "#28b038"),
+  sceneTreesProperty: profileColor("sceneTrees", "#1a6e2a", "#1a6e2a"),
   sceneWireProperty: profileColor("sceneWire", "#d00000", "#d00000"),
   sceneTransmitterBuildingProperty: profileColor("sceneTransmitterBuilding", "#d0b218", "#d0b218"),
   sceneReceiverRoofProperty: profileColor("sceneReceiverRoof", "#555555", "#555555"),
