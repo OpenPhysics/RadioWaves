@@ -81,13 +81,13 @@ export default class BackgroundSceneNode extends CanvasNode {
     context.fillRect(bounds.minX, bounds.minY, W, H);
 
     // Sun in the upper-right of the sky, painted before clouds so clouds overlap it naturally
-    this.paintSun(context, W * 0.70, H * 0.09);
+    this.paintSun(context, W * 0.7, H * 0.09);
 
     // Fluffy cumulus clouds at varied depths (opacity signals distance)
     this.paintCloud(context, W * 0.06, H * 0.14, W * 0.048);
     this.paintCloud(context, W * 0.29, H * 0.08, W * 0.042);
     this.paintCloud(context, W * 0.52, H * 0.17, W * 0.036, 0.88);
-    this.paintCloud(context, W * 0.17, H * 0.37, W * 0.030, 0.72);
+    this.paintCloud(context, W * 0.17, H * 0.37, W * 0.03, 0.72);
     this.paintCloud(context, W * 0.43, H * 0.31, W * 0.026, 0.65);
   }
 
@@ -128,14 +128,14 @@ export default class BackgroundSceneNode extends CanvasNode {
 
     // Soft translucent shadow cast below the cloud
     context.beginPath();
-    context.ellipse(x + size * 0.48, y + size * 0.42, size * 0.60, size * 0.12, 0, 0, Math.PI * 2);
+    context.ellipse(x + size * 0.48, y + size * 0.42, size * 0.6, size * 0.12, 0, 0, Math.PI * 2);
     context.fillStyle = `rgba(65, 90, 130, ${0.17 * opacity})`;
     context.fill();
 
     // Shading lobes at the base — give the cloud body and volumetric depth
     for (const { dx, dy, r } of [
-      { dx: 0.08, dy: 0.08, r: 0.40 },
-      { dx: 0.44, dy: -0.08, r: 0.50 },
+      { dx: 0.08, dy: 0.08, r: 0.4 },
+      { dx: 0.44, dy: -0.08, r: 0.5 },
       { dx: 0.88, dy: 0.08, r: 0.37 },
     ]) {
       context.beginPath();
@@ -146,11 +146,11 @@ export default class BackgroundSceneNode extends CanvasNode {
 
     // Bright white lobes — the sunlit tops of the cumulus towers
     for (const { dx, dy, r } of [
-      { dx: 0.00, dy: 0.00, r: 0.42 },
-      { dx: 0.38, dy: -0.30, r: 0.56 },
-      { dx: 0.80, dy: -0.10, r: 0.42 },
+      { dx: 0.0, dy: 0.0, r: 0.42 },
+      { dx: 0.38, dy: -0.3, r: 0.56 },
+      { dx: 0.8, dy: -0.1, r: 0.42 },
       { dx: 0.96, dy: 0.04, r: 0.38 },
-      { dx: 0.50, dy: 0.06, r: 0.28 },
+      { dx: 0.5, dy: 0.06, r: 0.28 },
     ]) {
       context.beginPath();
       context.arc(x + dx * size, y + dy * size, r * size, 0, Math.PI * 2);
@@ -301,8 +301,8 @@ export default class BackgroundSceneNode extends CanvasNode {
     context.fillStyle = RadioWavesColors.sceneTreesProperty.value.toCSS();
 
     for (const { yTop, yBot, wFrac } of [
-      { yTop: baseY - height * 0.44, yBot: baseY, wFrac: 1.00 },
-      { yTop: baseY - height * 0.70, yBot: baseY - height * 0.30, wFrac: 0.70 },
+      { yTop: baseY - height * 0.44, yBot: baseY, wFrac: 1.0 },
+      { yTop: baseY - height * 0.7, yBot: baseY - height * 0.3, wFrac: 0.7 },
       { yTop: baseY - height, yBot: baseY - height * 0.58, wFrac: 0.44 },
     ]) {
       const hw = (w * wFrac) / 2;
