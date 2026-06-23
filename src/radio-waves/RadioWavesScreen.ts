@@ -1,3 +1,4 @@
+import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Screen, type ScreenOptions } from "scenerystack/sim";
 import type { Tandem } from "scenerystack/tandem";
 import type { RadioWavesPreferencesModel } from "../preferences/RadioWavesPreferencesModel.js";
@@ -12,10 +13,12 @@ export class RadioWavesScreen extends Screen<RadioWavesModel, RadioWavesScreenVi
     super(
       () => new RadioWavesModel(options.preferences),
       (model) => new RadioWavesScreenView(model, { tandem: options.tandem.createTandem("view") }),
-      {
-        createKeyboardHelpNode: () => new RadioWavesKeyboardHelpContent(),
-        ...options,
-      },
+      optionize<RadioWavesScreenOptions, EmptySelfOptions, ScreenOptions>()(
+        {
+          createKeyboardHelpNode: () => new RadioWavesKeyboardHelpContent(),
+        },
+        options,
+      ),
     );
   }
 }
