@@ -38,6 +38,7 @@ SceneryStack port of the PhET *Radio Waves & Electromagnetic Fields* simulation 
 ## Conventions & deliberate carve-outs
 
 - **Decorative canvas colors are a carve-out.** `BackgroundSceneNode` paints the sky/sun directly via Canvas 2D `createRadialGradient`, which needs CSS color **strings**, so it uses raw hex/`rgba()` literals rather than `RadioWavesColors` `ProfileColorProperty`s. This decorative backdrop is intentionally not part of the themeable color profile (consistent with the screen-icon palette carve-out).
+- **Constants are nested, not at `src/` root (CONVENTIONS.md §2).** All named constants live in `src/radio-waves/model/RadioWavesConstants.ts`, next to the model that consumes them; there is deliberately no root `RadioWavesConstants.ts`.
 
 ## Accessibility
 
@@ -57,5 +58,5 @@ No unit-test suite — the build/lint/check gate plus manual run substitute for 
 
 ## Development notes
 
-- English and French UI via `StringManager`.
+- English, Spanish, and French UI via `StringManager`.
 - Field display modes (curve with vectors / curve / full field grid / none), radiated-vs-static, and force-on-electron-vs-E-field are the core visualization toggles.
