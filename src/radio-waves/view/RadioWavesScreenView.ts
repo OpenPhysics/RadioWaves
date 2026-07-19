@@ -115,10 +115,10 @@ export class RadioWavesScreenView extends ScreenView {
     });
 
     // ── Bottom controls ───────────────────────────────────────────────────────
-    const playPauseButton = new PlayPauseButton(model.isPlayingProperty, { radius: PLAY_BUTTON_RADIUS });
+    const playPauseButton = new PlayPauseButton(model.timer.isPlayingProperty, { radius: PLAY_BUTTON_RADIUS });
     const stepForwardButton = new StepForwardButton({
       radius: STEP_BUTTON_RADIUS,
-      enabledProperty: DerivedProperty.not(model.isPlayingProperty),
+      enabledProperty: DerivedProperty.not(model.timer.isPlayingProperty),
       listener: () => model.stepOnce(),
     });
     const playbackControls = new HBox({

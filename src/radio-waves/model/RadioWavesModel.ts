@@ -14,6 +14,7 @@
 import { BooleanProperty, Emitter, NumberProperty, Property } from "scenerystack/axon";
 import { type Bounds2, Vector2 } from "scenerystack/dot";
 import type { TModel } from "scenerystack/joist";
+import { TimeModel } from "../../common/TimeModel.js";
 import type { RadioWavesPreferencesModel } from "../../preferences/RadioWavesPreferencesModel.js";
 import radioWavesQueryParameters from "../../preferences/radioWavesQueryParameters.js";
 import Constants from "../../RadioWavesConstants.js";
@@ -43,7 +44,8 @@ export class RadioWavesModel implements TModel {
   public readonly fieldSenseProperty = new Property<FieldSense>("forceOnElectron");
   public readonly fieldDisplayedProperty = new Property<FieldDisplayed>("radiated");
   public readonly showPositionPlotsProperty = new BooleanProperty(radioWavesQueryParameters.showPositionPlots);
-  public readonly isPlayingProperty = new BooleanProperty(true);
+  /** Play/pause clock — starts playing (continuous animation). */
+  public readonly timer = new TimeModel(true);
 
   // Fires once per fixed physics slice, so views can sample at the constant model cadence.
   public readonly steppedEmitter = new Emitter();
@@ -100,7 +102,8 @@ export class RadioWavesModel implements TModel {
   }
 
   public step(dt: number): void {
-    if (!this.isPlayingProperty.value) {
+    this.timer.step(dt);
+    if (!this.timer.isPlayingProperty.value) {
       return;
     }
     const frame = Constants.FRAME_DURATION;
@@ -132,7 +135,7 @@ export class RadioWavesModel implements TModel {
   }
 
   public reset(): void {
-    this.isPlayingProperty.reset();
+    this.timer.reset();
     this.movementModeProperty.reset();
     this.frequencyProperty.reset();
     this.amplitudeProperty.reset();
