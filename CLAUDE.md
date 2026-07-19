@@ -6,13 +6,15 @@ Sim-specific context for AI assistants. General SceneryStack guidance: [OpenPhys
 
 SceneryStack port of the PhET *Radio Waves & Electromagnetic Fields* simulation (rebuilt from legacy PIXI.js + Backbone). Single screen: a transmitting antenna whose electron you wiggle (by hand or sinusoidally), a receiving antenna whose electron responds, several field-visualization modes, and oscilloscope-style electron position plots.
 
+Physics for educators: `doc/model.md`. Architecture: `doc/implementation-notes.md`.
+
 ## Key files
 
 | Area | Location |
 |---|---|
 | Screen | `src/radio-waves/RadioWavesScreen.ts` |
 | Model | `model/RadioWavesModel.ts` (state + step), `Antenna.ts`, `Electron.ts` (retarded-field source), `EmfSensingElectron.ts` (receiver), `MovementStrategy.ts`, `RadioWavesConstants.ts` |
-| View | `view/RadioWavesScreenView.ts`, `FieldLatticeNode.ts` (arrow/curve field), `AntennaNode.ts`, `ElectronNode.ts`, `ElectronPositionPlotNode.ts`, `BackgroundSceneNode.ts`, `FieldControlPanel.ts`, `TransmitterMovementPanel.ts`, `LegendNode.ts` |
+| View | `view/RadioWavesScreenView.ts`, `FieldLatticeNode.ts` (arrow/curve field), `AntennaNode.ts`, `ElectronNode.ts`, `ElectronPositionPlotNode.ts`, `BackgroundSceneNode.ts`, `FieldControlPanel.ts`, `TransmitterMovementPanel.ts`, `LegendNode.ts`, `RadioWavesScreenSummaryContent.ts` |
 | Colors / strings | `RadioWavesColors.ts`, `RadioWavesNamespace.ts`, `src/i18n/StringManager.ts` |
 
 ## Model
@@ -35,11 +37,6 @@ SceneryStack port of the PhET *Radio Waves & Electromagnetic Fields* simulation 
 - **Retarded field.** `Electron` keeps a rolling history of its position and acceleration. `getStaticFieldAt` returns a Coulomb-like near field; `getDynamicFieldAt` returns the **radiated** field at a point from the source's *retarded* transverse acceleration — indexed by distance (propagation at `Constants.SPEED_OF_LIGHT`) and reduced with distance.
 - **This is "Hollywood physics," ported faithfully.** Off-axis falloff and assorted fudge factors are pedagogical, not a literal Liénard–Wiechert solution. When touching `Electron.ts`, preserve the tuned constants — they are calibrated for the look of the original, not derived.
 
-## Conventions & deliberate carve-outs
-
-- **Decorative canvas colors are a carve-out.** `BackgroundSceneNode` paints the sky/sun directly via Canvas 2D `createRadialGradient`, which needs CSS color **strings**, so it uses raw hex/`rgba()` literals rather than `RadioWavesColors` `ProfileColorProperty`s. This decorative backdrop is intentionally not part of the themeable color profile (consistent with the screen-icon palette carve-out).
-- **Constants are nested, not at `src/` root (CONVENTIONS.md §2).** All named constants live in `src/radio-waves/model/RadioWavesConstants.ts`, next to the model that consumes them; there is deliberately no root `RadioWavesConstants.ts`.
-
 ## Accessibility
 
 Follows the shared [OpenPhysics accessibility convention](https://github.com/OpenPhysics/Baton/blob/main/ACCESSIBILITY.md).
@@ -50,8 +47,8 @@ JSON, via `StringManager.getA11yStrings()`.
 
 ## Compliance carve-outs
 
-- **Nested constants:** screen-scoped constants under `src/radio-waves/`.
-- **Hardcoded colors:** canvas gradient stops in `BackgroundSceneNode.ts` (sun/sky art) — procedural scene painting, not `ProfileColorProperty` UI chrome.
+- **Nested constants:** screen-scoped constants under `src/radio-waves/model/RadioWavesConstants.ts`.
+- **Hardcoded colors:** canvas gradient stops in `BackgroundSceneNode.ts` (sun/sky art) — procedural scene painting via Canvas 2D `createRadialGradient`, not `ProfileColorProperty` UI chrome.
 
 ## Testing
 
@@ -59,24 +56,25 @@ Fleet-standard Vitest layout:
 
 | Path | Purpose |
 |---|---|
-| `vitest.config.ts` | Test environment + `setupFiles` when present; `execArgv: ["--expose-gc"]` with memory-leak suite |
-| `tests/setup.ts` | Canvas / AudioContext mocks + `init({ name: "…" })` before SceneryStack imports (when required) |
+| `vitest.config.ts` | `happy-dom` environment, `setupFiles`, `execArgv: ["--expose-gc"]` |
+| `tests/setup.ts` | Canvas / AudioContext mocks + `init({ name: "…" })` before SceneryStack imports |
 | `tests/**/*.test.ts` | Model/physics unit tests — mirror `src/` under `tests/` |
 | `tests/memory-leak.test.ts` | WeakRef + `forceGC` dispose regression (fleet pattern) |
 
-- Put unit tests only under root `tests/` (never co-locate or use `__tests__/`).
-- Run `npm test`. CI runs the suite when a `test` script is present.
-- Expand `memory-leak.test.ts` for components that add/remove nodes or link Properties at runtime (see OpticsLab).
+Actual specs:
+
+- `tests/radio-waves/model/SinusoidalMovementStrategy.test.ts`
+- `tests/memory-leak.test.ts`
+
+Run `npm test`. CI runs the suite when a `test` script is present.
 
 ## Commands
 
 ```bash
 npm run lint && npm run check && npm run build
+npm test
 ```
-
-No unit-test suite — the build/lint/check gate plus manual run substitute for tests here.
 
 ## Development notes
 
-- English, Spanish, and French UI via `StringManager`.
 - Field display modes (curve with vectors / curve / full field grid / none), radiated-vs-static, and force-on-electron-vs-E-field are the core visualization toggles.

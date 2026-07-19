@@ -1,67 +1,89 @@
-# Implementation Notes - Radio Waves Simulation
+# Implementation Notes - Radio Waves
+
+Developer-facing notes on the architecture. The physics itself is documented for educators in
+[model.md](./model.md).
 
 ## Architecture Overview
 
-The Radio Waves simulation is structured using a Model-View pattern for electromagnetic wave propagation between transmitting and receiving antennas. It is a SceneryStack port of the PhET *Radio Waves* simulation.
+Radio Waves is a single-screen SceneryStack simulation, a port of PhET's *Radio Waves &
+Electromagnetic Fields* (rebuilt from the legacy PIXI.js + Backbone HTML5 sim).
 
-### High-Level Architecture
+```
+src/
+  main.ts, brand.ts, splash.ts, assert.ts, init.ts
+  RadioWavesColors.ts, RadioWavesNamespace.ts
+  i18n/StringManager.ts, strings_*.json
+  preferences/
+  radio-waves/
+    RadioWavesScreen.ts
+    model/
+      RadioWavesModel.ts              TModel: two electrons, step loop, display Properties
+      Electron.ts                     transmitting source + retarded field history
+      EmfSensingElectron.ts           receiver driven by retarded source state
+      Antenna.ts                      segment constraint for electron motion
+      MovementStrategy.ts             Manual vs Sinusoidal drive
+      RadioWavesConstants.ts
+    view/
+      RadioWavesScreenView.ts         layout, play/step, mvt
+      FieldLatticeNode.ts             curve / curve+vectors / full grid / none
+      AntennaNode.ts, ElectronNode.ts
+      ElectronPositionPlotNode.ts     oscilloscope traces
+      FieldControlPanel.ts, TransmitterMovementPanel.ts
+      BackgroundSceneNode.ts, LegendNode.ts
+      RadioWavesScreenSummaryContent.ts, RadioWavesKeyboardHelpContent.ts
+```
 
-The simulation follows a modular architecture:
+Data flows Model → View through AXON `Property` objects; `RadioWavesModel.steppedEmitter` gives
+views a fixed cadence decoupled from variable frame dt.
 
-- **Model Layer (`src/radio-waves/model/`)**: Antennas, electrons, movement strategies, and field display state
-- **View Layer (`src/radio-waves/view/`)**: Field lattice, oscilloscope plots, antennas, and control panels
+## Key design decisions
 
-`RadioWavesModel` fuses two antennas, two electrons, movement strategies, and all control state into one coordinator class.
+- **Hollywood physics — preserve tuning.** `Electron.getDynamicFieldAt`, history shift rate
+  (`STEP_SIZE = floor(SPEED_OF_LIGHT)`), `FIELD_SCALE_B`, static scaling, and the receiver's
+  `EMF_SINUSOIDAL_SCALE` (0.4) are verbatim port constants. Changing them breaks visual parity
+  with the original; they are not SI-derived.
+- **Retarded history buffers.** `Electron` maintains `positionHistory`, `accelerationHistory`, and
+  `movementStrategyHistory` arrays of length `RETARDED_FIELD_LENGTH` (2000). Each fixed slice
+  shifts indices by `STEP_SIZE` model units ≈ one propagation step per frame.
+- **Fixed timestep accumulator.** Wall-clock `FRAME_DURATION` = 0.03 s per slice; each slice
+  advances `DT_PER_FRAME` = 0.375 model-seconds. `MAX_CATCHUP_STEPS` = 5. Step button calls
+  `advanceOneFrame()` / `stepOnce()` regardless of play state.
+- **Two electrons, two roles.** Transmitter: `Electron` + optional `Antenna` constraint +
+  `MovementStrategy`. Receiver: `EmfSensingElectron` pinned to rest each step, then displaced by
+  retarded source position if `isFieldOff(x)` is false.
+- **Field query API.** Views and receiver call `getStaticFieldAt`, `getDynamicFieldAt`,
+  `getAccelerationAt`, `getPositionAt` — all indexed by distance from the source origin
+  (`startPosition`), not always the instantaneous electron position (original quirk).
+- **Decorative canvas carve-out.** `BackgroundSceneNode` paints sky/sun via Canvas 2D gradients
+  with raw hex/rgba strings — not `ProfileColorProperty`s (procedural backdrop).
+- **Nested constants.** `src/radio-waves/model/RadioWavesConstants.ts`.
 
-### Model-View Transform
+## View components
 
-The model world is 1000×700 units. `ModelViewTransform2.createSinglePointScaleMapping()` maps model to view with non-inverted Y.
+- **RadioWavesScreenView** — `ModelViewTransform2.createSinglePointScaleMapping` from
+  `SIMULATION_ORIGIN`; play/pause/step; control column.
+- **FieldLatticeNode** — samples `RadioWavesModel` field API per `fieldDisplayTypeProperty`,
+  `fieldDisplayedProperty` (radiated/static), `fieldSenseProperty` (force vs E-field).
+- **ElectronPositionPlotNode** — rolling position history for both electrons.
+- **TransmitterMovementPanel** — manual vs oscillate, frequency, amplitude sliders.
+- **FieldControlPanel** — display mode toggles.
+- **BackgroundSceneNode**, **LegendNode** — scene art and key.
 
-## Model Components
+## Disposal conventions
 
-### Core Model Design
+Single-screen, screen-lifetime nodes. No dynamic particle array. Fleet memory-leak suite covers
+the standard dispose regression pattern.
 
-`RadioWavesModel` owns transmitter and receiver antennas, transmitting and sensing electrons, and all user-facing display options.
+## Testing
 
-### Component Specialization
+`npm test` (vitest):
 
-Each model component has a single responsibility:
+- `tests/radio-waves/model/SinusoidalMovementStrategy.test.ts` — quarter-period offset, reset,
+  full-period return
+- `tests/memory-leak.test.ts` — WeakRef/GC regression suite
 
-1. **Electron**: Transmitting electron with position history
-2. **EmfSensingElectron**: Receiving electron driven by retarded source field
-3. **Antenna**: Position constraints for electrons
-4. **MovementStrategy**: Manual vs sinusoidal transmitter motion (`ManualMovementStrategy`, `SinusoidalMovementStrategy`)
+CI gate: `npm run lint && npm run check && npm run build`.
 
-Field display is controlled by enums: `FieldDisplayType`, `FieldSense`, and `FieldDisplayed`.
+## Multi-screen simulations
 
-### Physics Simulation Approach
-
-Integration uses a fixed timestep with accumulator. A `steppedEmitter` provides a view sampling cadence decoupled from the integration rate.
-
-Constants live in `RadioWavesConstants.ts`.
-
-## View Components
-
-### RadioWavesScreenView as Coordinator
-
-The screen view lays out the play area, control column, and bottom play/step controls.
-
-Specialized view classes handle specific visualization aspects:
-
-1. **FieldLatticeNode**: E-field visualization in curve+vectors, curve, full grid, or none modes
-2. **AntennaNode**, **ElectronNode**: Hardware rendering
-3. **ElectronPositionPlotNode**: Oscilloscope-style position plots
-4. **FieldControlPanel**: Field display mode, radiated vs static, force vs E-field direction
-5. **TransmitterMovementPanel**: Manual vs sinusoidal motion, frequency, and amplitude
-6. **BackgroundSceneNode**, **LegendNode**: Scene backdrop and legend
-
-### Color Scheme
-
-Colors are defined in `RadioWavesColors.ts` as `ProfileColorProperty` instances. Field arrow colors should remain neutral relative to electron colors.
-
-### Performance Optimizations
-
-- Full field grid mode is the most expensive display option; curve-only modes reduce lattice work
-- Position history for oscilloscope plots is bounded by model constraints
-
-Note that no dispose functions have been used, which should be addressed.
+Single-screen. See fleet `doc/multi-screen.md` if extended.
