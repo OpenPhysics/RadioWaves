@@ -9,7 +9,7 @@
 import type { ReadOnlyProperty } from "scenerystack";
 import type { Vector2 } from "scenerystack/dot";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
-import { Circle, DragListener, Node } from "scenerystack/scenery";
+import { Circle, DragListener, KeyboardDragListener, Node } from "scenerystack/scenery";
 import { StringManager } from "../../i18n/StringManager.js";
 import RadioWavesColors from "../../RadioWavesColors.js";
 
@@ -64,6 +64,21 @@ export default class ElectronNode extends Node {
           drag: (event) => {
             const viewPoint = this.globalToParentPoint(event.pointer.point);
             onDrag(modelViewTransform.viewToModelPosition(viewPoint));
+          },
+        }),
+      );
+      this.addInputListener(
+        new KeyboardDragListener({
+          transform: modelViewTransform,
+          dragSpeed: 100,
+          shiftDragSpeed: 40,
+          keyboardDragDirection: "upDown",
+          start: () => {
+            onDragStart?.();
+          },
+          drag: (_event, listener) => {
+            const current = positionProperty.value;
+            onDrag(current.plusXY(listener.modelDelta.x, listener.modelDelta.y));
           },
         }),
       );
