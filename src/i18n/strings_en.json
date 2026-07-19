@@ -50,7 +50,16 @@
       "movementMode": "Transmitter movement mode",
       "fieldDisplay": "Field display mode",
       "fieldSense": "Field sense",
-      "fieldDisplayed": "Field displayed"
+      "fieldDisplayed": "Field displayed",
+      "playPauseStart": "Play",
+      "playPauseEnd": "Pause",
+      "stepForward": "Step forward",
+      "resetAll": "Reset All",
+      "frequency": "Oscillator frequency",
+      "frequencyHelp": "Set how fast the transmitting electron oscillates.",
+      "amplitude": "Oscillator amplitude",
+      "amplitudeHelp": "Set how far the transmitting electron moves.",
+      "electronPositions": "Show electron position plots"
     }
   },
   "preferences": {

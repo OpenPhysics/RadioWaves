@@ -50,7 +50,16 @@
       "movementMode": "Mode de mouvement de l'émetteur",
       "fieldDisplay": "Mode d'affichage du champ",
       "fieldSense": "Sens du champ",
-      "fieldDisplayed": "Champ affiché"
+      "fieldDisplayed": "Champ affiché",
+      "playPauseStart": "Lecture",
+      "playPauseEnd": "Pause",
+      "stepForward": "Avancer d'un pas",
+      "resetAll": "Tout réinitialiser",
+      "frequency": "Fréquence de l'oscillateur",
+      "frequencyHelp": "Définissez la vitesse d'oscillation de l'électron émetteur.",
+      "amplitude": "Amplitude de l'oscillateur",
+      "amplitudeHelp": "Définissez l'amplitude de mouvement de l'électron émetteur.",
+      "electronPositions": "Afficher les graphiques de position des électrons"
     }
   },
   "preferences": {

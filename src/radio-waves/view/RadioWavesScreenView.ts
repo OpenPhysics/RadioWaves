@@ -115,11 +115,17 @@ export class RadioWavesScreenView extends ScreenView {
     });
 
     // ── Bottom controls ───────────────────────────────────────────────────────
-    const playPauseButton = new PlayPauseButton(model.timer.isPlayingProperty, { radius: PLAY_BUTTON_RADIUS });
+    const a11y = StringManager.getInstance().getA11yStrings();
+    const playPauseButton = new PlayPauseButton(model.timer.isPlayingProperty, {
+      radius: PLAY_BUTTON_RADIUS,
+      startPlayingAccessibleName: a11y.controls.playPauseStartStringProperty,
+      endPlayingAccessibleName: a11y.controls.playPauseEndStringProperty,
+    });
     const stepForwardButton = new StepForwardButton({
       radius: STEP_BUTTON_RADIUS,
       enabledProperty: DerivedProperty.not(model.timer.isPlayingProperty),
       listener: () => model.stepOnce(),
+      accessibleName: a11y.controls.stepForwardStringProperty,
     });
     const playbackControls = new HBox({
       spacing: PLAYBACK_SPACING,
@@ -135,6 +141,7 @@ export class RadioWavesScreenView extends ScreenView {
         font: CHECKBOX_FONT,
         fill: RadioWavesColors.foregroundColorProperty,
       }),
+      { accessibleName: a11y.controls.electronPositionsStringProperty },
     );
     const electronPositionsPanel = new Panel(electronPositionsCheckbox, {
       fill: RadioWavesColors.panelFillProperty,
@@ -158,6 +165,7 @@ export class RadioWavesScreenView extends ScreenView {
       right: layoutBounds.maxX - MARGIN,
       bottom: layoutBounds.maxY - MARGIN,
       tandem: providedOptions.tandem.createTandem("resetAllButton"),
+      accessibleName: a11y.controls.resetAllStringProperty,
     });
 
     // ── Right column positioning ──────────────────────────────────────────────

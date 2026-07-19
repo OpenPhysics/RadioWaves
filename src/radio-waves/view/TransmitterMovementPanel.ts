@@ -61,13 +61,21 @@ export default class TransmitterMovementPanel extends Panel {
       strings.frequencyStringProperty,
       model.frequencyProperty,
       Constants.FREQUENCY_RANGE,
-      numberControlOptions,
+      {
+        ...numberControlOptions,
+        accessibleName: a11y.controls.frequencyStringProperty,
+        accessibleHelpText: a11y.controls.frequencyHelpStringProperty,
+      },
     );
     const amplitudeControl = new NumberControl(
       strings.amplitudeStringProperty,
       model.amplitudeProperty,
       Constants.AMPLITUDE_RANGE,
-      numberControlOptions,
+      {
+        ...numberControlOptions,
+        accessibleName: a11y.controls.amplitudeStringProperty,
+        accessibleHelpText: a11y.controls.amplitudeHelpStringProperty,
+      },
     );
 
     const content = new VBox({

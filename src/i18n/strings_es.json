@@ -50,7 +50,16 @@
       "movementMode": "Modo de movimiento del transmisor",
       "fieldDisplay": "Modo de visualización del campo",
       "fieldSense": "Sentido del campo",
-      "fieldDisplayed": "Campo mostrado"
+      "fieldDisplayed": "Campo mostrado",
+      "playPauseStart": "Reproducir",
+      "playPauseEnd": "Pausa",
+      "stepForward": "Avanzar un paso",
+      "resetAll": "Restablecer todo",
+      "frequency": "Frecuencia del oscilador",
+      "frequencyHelp": "Define qué tan rápido oscila el electrón transmisor.",
+      "amplitude": "Amplitud del oscilador",
+      "amplitudeHelp": "Define qué tan lejos se mueve el electrón transmisor.",
+      "electronPositions": "Mostrar gráficos de posición de electrones"
     }
   },
   "preferences": {
