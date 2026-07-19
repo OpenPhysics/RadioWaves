@@ -48,6 +48,11 @@ transmitter frequency + amplitude) via the `screenSummaryContent` super-option, 
 PDOM through a wrapper `Node`. A11y strings live under the top-level `a11y` key in each locale
 JSON, via `StringManager.getA11yStrings()`.
 
+## Compliance carve-outs
+
+- **Nested constants:** screen-scoped constants under `src/radio-waves/`.
+- **Hardcoded colors:** canvas gradient stops in `BackgroundSceneNode.ts` (sun/sky art) — procedural scene painting, not `ProfileColorProperty` UI chrome.
+
 ## Testing
 
 Fleet-standard Vitest layout:

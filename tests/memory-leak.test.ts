@@ -1,10 +1,12 @@
 /**
  * Fleet-standard memory-leak regression suite.
- * This sim has no dedicated disposable TimeModel; NumberProperty.dispose() is the unit under test.
+ * SinusoidalMovementStrategy + Electron are the pure model units under test.
  */
 
-import { NumberProperty } from "scenerystack/axon";
+import { Vector2 } from "scenerystack/dot";
 import { describe, expect, it } from "vitest";
+import Electron from "../src/radio-waves/model/Electron.js";
+import { SinusoidalMovementStrategy } from "../src/radio-waves/model/MovementStrategy.js";
 
 async function forceGC(earlyExitRef?: WeakRef<object>): Promise<void> {
   for (let i = 0; i < 15; i++) {
@@ -19,11 +21,13 @@ async function forceGC(earlyExitRef?: WeakRef<object>): Promise<void> {
   }
 }
 
-function createAndDisposeProperty(): WeakRef<object> {
-  const property = new NumberProperty(0);
-  const ref = new WeakRef<object>(property);
-  property.dispose();
-  return ref;
+function createAndDropStrategy(): WeakRef<object> {
+  const electron = new Electron(new Vector2(0, 0));
+  electron.recordingHistory = false;
+  const strategy = new SinusoidalMovementStrategy(electron, 1, 50);
+  strategy.update(0.25);
+  strategy.reset(1, 50);
+  return new WeakRef<object>(strategy);
 }
 
 describe("Memory leak regression", () => {
@@ -37,25 +41,18 @@ describe("Memory leak regression", () => {
     expect(ref.deref()).toBeUndefined();
   });
 
-  it("NumberProperty is collected after dispose", async () => {
-    const ref = createAndDisposeProperty();
+  it("SinusoidalMovementStrategy is collected after drop", async () => {
+    const ref = createAndDropStrategy();
     await forceGC(ref);
     expect(ref.deref()).toBeUndefined();
   });
 
-  it("double dispose() does not throw", () => {
-    const property = new NumberProperty(0);
-    property.dispose();
-    expect(() => property.dispose()).not.toThrow();
-  });
-
-  it("repeated create/dispose cycles leave no survivors", async () => {
+  it("repeated create/drop cycles leave no survivors", async () => {
     const refs: WeakRef<object>[] = [];
     for (let i = 0; i < 10; i++) {
-      refs.push(createAndDisposeProperty());
+      refs.push(createAndDropStrategy());
     }
     await forceGC();
-    const survivors = refs.filter((r) => r.deref() !== undefined).length;
-    expect(survivors).toBe(0);
+    expect(refs.filter((r) => r.deref() !== undefined).length).toBe(0);
   });
 });
