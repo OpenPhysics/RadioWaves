@@ -41,7 +41,8 @@ const RadioWavesColors = {
   // Oscilloscope position plots. Deep navy background; the trace color matches the electron
   // (cyan/teal) since the plot shows electron position over time.
   plotBackgroundProperty: profileColor("plotBackground", new Color(8, 12, 22), WHITE),
-  plotGridProperty: profileColor("plotGrid", "#1c2a3a", "#b8c8d8"),
+  // Default grid brightened vs. the deep navy plot fill so axes/border stay readable.
+  plotGridProperty: profileColor("plotGrid", "#4a6580", "#b8c8d8"),
   plotLineProperty: profileColor("plotLine", "#29d9ff", "#0086a8"),
 
   // ── Background scene (landscape art) ──────────────────────────────────────────
