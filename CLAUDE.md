@@ -47,7 +47,7 @@ JSON, via `StringManager.getA11yStrings()`.
 
 ## Compliance carve-outs
 
-- **Nested constants:** screen-scoped constants under `src/radio-waves/model/RadioWavesConstants.ts`.
+- **Nested constants:** screen-scoped constants under `src/RadioWavesConstants.ts`.
 - **Hardcoded colors:** canvas gradient stops in `BackgroundSceneNode.ts` (sun/sky art) — procedural scene painting via Canvas 2D `createRadialGradient`, not `ProfileColorProperty` UI chrome.
 
 ## Testing

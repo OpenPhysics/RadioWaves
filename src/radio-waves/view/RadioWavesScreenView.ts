@@ -17,6 +17,7 @@ import { PhetFont, PlayPauseButton, ResetAllButton, StepForwardButton } from "sc
 import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import { Checkbox, Panel } from "scenerystack/sun";
 import type { Tandem } from "scenerystack/tandem";
+import { FLAT_RESET_ALL_BUTTON_OPTIONS } from "../../common/RadioWavesButtonOptions.js";
 import { StringManager } from "../../i18n/StringManager.js";
 import RadioWavesColors from "../../RadioWavesColors.js";
 import type { RadioWavesModel } from "../model/RadioWavesModel.js";
@@ -146,6 +147,7 @@ export class RadioWavesScreenView extends ScreenView {
     });
 
     const resetAllButton = new ResetAllButton({
+      ...FLAT_RESET_ALL_BUTTON_OPTIONS,
       listener: () => {
         this.interruptSubtreeInput();
         model.reset();

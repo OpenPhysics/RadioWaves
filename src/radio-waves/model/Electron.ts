@@ -11,6 +11,7 @@
  */
 
 import { Vector2, Vector2Property } from "scenerystack/dot";
+import Constants from "../../RadioWavesConstants.js";
 import type Antenna from "./Antenna.js";
 import {
   ManualMovementStrategy,
@@ -18,7 +19,6 @@ import {
   type MovementStrategy,
   type SinusoidalMovementStrategy,
 } from "./MovementStrategy.js";
-import Constants from "./RadioWavesConstants.js";
 
 // History indices shifted per recorded frame (≈ propagation speed).
 const STEP_SIZE = Math.floor(Constants.SPEED_OF_LIGHT);

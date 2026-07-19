@@ -56,7 +56,7 @@ views a fixed cadence decoupled from variable frame dt.
   (`startPosition`), not always the instantaneous electron position (original quirk).
 - **Decorative canvas carve-out.** `BackgroundSceneNode` paints sky/sun via Canvas 2D gradients
   with raw hex/rgba strings — not `ProfileColorProperty`s (procedural backdrop).
-- **Nested constants.** `src/radio-waves/model/RadioWavesConstants.ts`.
+- **Nested constants.** `src/RadioWavesConstants.ts`.
 
 ## View components
 

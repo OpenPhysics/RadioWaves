@@ -12,8 +12,8 @@ import { NumberControl, PhetFont } from "scenerystack/scenery-phet";
 import { AquaRadioButtonGroup, Panel } from "scenerystack/sun";
 import { StringManager } from "../../i18n/StringManager.js";
 import RadioWavesColors from "../../RadioWavesColors.js";
+import Constants from "../../RadioWavesConstants.js";
 import type { MovementMode } from "../model/MovementStrategy.js";
-import Constants from "../model/RadioWavesConstants.js";
 import type { RadioWavesModel } from "../model/RadioWavesModel.js";
 
 const TITLE_FONT = new PhetFont({ size: 15, weight: "bold" });
