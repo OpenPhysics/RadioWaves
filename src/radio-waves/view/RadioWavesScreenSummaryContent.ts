@@ -7,7 +7,7 @@
  * frequency and amplitude).
  *
  * Follows the OpenPhysics accessibility convention; see the canonical
- * TemplateSingleSim/SimScreenSummaryContent.ts.
+ * SceneryStackTemplate/SimScreenSummaryContent.ts.
  */
 import { DerivedProperty } from "scenerystack/axon";
 import { StringUtils } from "scenerystack/phetcommon";
