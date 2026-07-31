@@ -141,7 +141,11 @@ export class RadioWavesScreenView extends ScreenView {
         font: CHECKBOX_FONT,
         fill: RadioWavesColors.foregroundColorProperty,
       }),
-      { accessibleName: a11y.controls.electronPositionsStringProperty },
+      {
+        accessibleName: a11y.controls.electronPositionsStringProperty,
+        checkboxColor: RadioWavesColors.foregroundColorProperty,
+        checkboxColorBackground: RadioWavesColors.panelFillProperty,
+      },
     );
     const electronPositionsPanel = new Panel(electronPositionsCheckbox, {
       fill: RadioWavesColors.panelFillProperty,
