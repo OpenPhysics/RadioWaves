@@ -9,7 +9,7 @@
 import type { ReadOnlyProperty } from "scenerystack";
 import type { Vector2 } from "scenerystack/dot";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
-import { Circle, DragListener, KeyboardDragListener, Node } from "scenerystack/scenery";
+import { Circle, Node, RichDragListener } from "scenerystack/scenery";
 import { StringManager } from "../../i18n/StringManager.js";
 import RadioWavesColors from "../../RadioWavesColors.js";
 
@@ -56,29 +56,23 @@ export default class ElectronNode extends Node {
     if (options.onDrag) {
       const onDrag = options.onDrag;
       const onDragStart = options.onDragStart;
+      // Custom mapping via onDrag (not a free 1:1 positionProperty write); Rich still
+      // covers pointer + keyboard with model-space deltas from the transform.
       this.addInputListener(
-        new DragListener({
-          start: () => {
-            onDragStart?.();
-          },
-          drag: (event) => {
-            const viewPoint = this.globalToParentPoint(event.pointer.point);
-            onDrag(modelViewTransform.viewToModelPosition(viewPoint));
-          },
-        }),
-      );
-      this.addInputListener(
-        new KeyboardDragListener({
+        new RichDragListener({
           transform: modelViewTransform,
-          dragSpeed: 100,
-          shiftDragSpeed: 40,
-          keyboardDragDirection: "upDown",
           start: () => {
             onDragStart?.();
           },
           drag: (_event, listener) => {
             const current = positionProperty.value;
             onDrag(current.plusXY(listener.modelDelta.x, listener.modelDelta.y));
+          },
+          dragListenerOptions: {},
+          keyboardDragListenerOptions: {
+            dragSpeed: 100,
+            shiftDragSpeed: 40,
+            keyboardDragDirection: "upDown",
           },
         }),
       );
