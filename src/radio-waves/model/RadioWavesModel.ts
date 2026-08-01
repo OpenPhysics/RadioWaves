@@ -11,7 +11,7 @@
  * field math depends on.
  */
 
-import { BooleanProperty, Emitter, NumberProperty, Property } from "scenerystack/axon";
+import { BooleanProperty, Emitter, NumberProperty, StringUnionProperty } from "scenerystack/axon";
 import { type Bounds2, Vector2 } from "scenerystack/dot";
 import type { TModel } from "scenerystack/joist";
 import { TimeModel } from "../../common/TimeModel.js";
@@ -37,12 +37,20 @@ export class RadioWavesModel implements TModel {
   private readonly sinusoidalStrategy: SinusoidalMovementStrategy;
 
   // ── Control state ─────────────────────────────────────────────────────────
-  public readonly movementModeProperty = new Property<MovementMode>("manual");
+  public readonly movementModeProperty = new StringUnionProperty<MovementMode>("manual", {
+    validValues: ["manual", "oscillate"],
+  });
   public readonly frequencyProperty = new NumberProperty(Constants.FREQUENCY_DEFAULT);
   public readonly amplitudeProperty = new NumberProperty(Constants.AMPLITUDE_DEFAULT);
-  public readonly fieldDisplayTypeProperty = new Property<FieldDisplayType>("curveWithVectors");
-  public readonly fieldSenseProperty = new Property<FieldSense>("forceOnElectron");
-  public readonly fieldDisplayedProperty = new Property<FieldDisplayed>("radiated");
+  public readonly fieldDisplayTypeProperty = new StringUnionProperty<FieldDisplayType>("curveWithVectors", {
+    validValues: ["curveWithVectors", "curve", "fullField", "none"],
+  });
+  public readonly fieldSenseProperty = new StringUnionProperty<FieldSense>("forceOnElectron", {
+    validValues: ["forceOnElectron", "electricField"],
+  });
+  public readonly fieldDisplayedProperty = new StringUnionProperty<FieldDisplayed>("radiated", {
+    validValues: ["radiated", "static"],
+  });
   public readonly showPositionPlotsProperty = new BooleanProperty(radioWavesQueryParameters.showPositionPlots);
   /** Play/pause clock — starts playing (continuous animation). */
   public readonly timer = new TimeModel(true);
