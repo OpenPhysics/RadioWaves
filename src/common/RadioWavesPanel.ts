@@ -25,21 +25,26 @@
  *   const panel = new RadioWavesPanel(content, { fill: "transparent" });
  */
 
+import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import type { Node } from "scenerystack/scenery";
-import type { PanelOptions } from "scenerystack/sun";
-import { Panel } from "scenerystack/sun";
+import { Panel, type PanelOptions } from "scenerystack/sun";
 import RadioWavesColors from "../RadioWavesColors.js";
 import { PANEL_CORNER_RADIUS } from "../RadioWavesConstants.js";
 
+export type RadioWavesPanelOptions = PanelOptions;
+
 export class RadioWavesPanel extends Panel {
-  public constructor(content: Node, providedOptions?: PanelOptions) {
-    super(content, {
-      fill: RadioWavesColors.panelBackgroundColorProperty,
-      stroke: RadioWavesColors.panelBorderColorProperty,
-      cornerRadius: PANEL_CORNER_RADIUS,
-      xMargin: 12,
-      yMargin: 10,
-      ...providedOptions,
-    });
+  public constructor(content: Node, providedOptions?: RadioWavesPanelOptions) {
+    const options = optionize<RadioWavesPanelOptions, EmptySelfOptions, PanelOptions>()(
+      {
+        fill: RadioWavesColors.panelBackgroundColorProperty,
+        stroke: RadioWavesColors.panelBorderColorProperty,
+        cornerRadius: PANEL_CORNER_RADIUS,
+        xMargin: 12,
+        yMargin: 10,
+      },
+      providedOptions,
+    );
+    super(content, options);
   }
 }

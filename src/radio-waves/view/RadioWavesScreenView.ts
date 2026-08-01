@@ -11,6 +11,7 @@
 
 import { DerivedProperty } from "scenerystack/axon";
 import { Bounds2, Vector2 } from "scenerystack/dot";
+import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { HBox, Node, Text } from "scenerystack/scenery";
 import { PhetFont, PlayPauseButton, ResetAllButton, StepForwardButton } from "scenerystack/scenery-phet";
@@ -42,7 +43,13 @@ const CHECKBOX_FONT = new PhetFont(14);
 
 export class RadioWavesScreenView extends ScreenView {
   public constructor(model: RadioWavesModel, providedOptions: RadioWavesScreenViewOptions) {
-    super({ ...providedOptions, screenSummaryContent: new RadioWavesScreenSummaryContent(model) });
+    const options = optionize<RadioWavesScreenViewOptions, EmptySelfOptions, ScreenViewOptions>()(
+      {
+        screenSummaryContent: new RadioWavesScreenSummaryContent(model),
+      },
+      providedOptions,
+    );
+    super(options);
 
     const layoutBounds = this.layoutBounds;
 
