@@ -1,5 +1,7 @@
 # Radio Waves & Electromagnetic Fields
 
+[![CI](https://github.com/OpenPhysics/RadioWaves/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenPhysics/RadioWaves/actions/workflows/ci.yml)
+
 A [SceneryStack](https://scenerystack.org/) port of the PhET *Radio Waves & Electromagnetic Fields*
 simulation. Wiggle the electron in the transmitting antenna and watch the radiated electric field propagate
 outward and drive the electron in the distant receiving antenna.
