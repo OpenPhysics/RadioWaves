@@ -1,6 +1,6 @@
 # Radio Waves & Electromagnetic Fields
 
-[![CI](https://github.com/OpenPhysics/RadioWaves/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenPhysics/RadioWaves/actions/workflows/ci.yml)
+[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 
 A [SceneryStack](https://scenerystack.org/) port of the PhET *Radio Waves & Electromagnetic Fields*
 simulation. Wiggle the electron in the transmitting antenna and watch the radiated electric field propagate
@@ -50,10 +50,10 @@ npm start        # dev server → http://localhost:5173
 
 ## License
 
-GNU Affero General Public License v3.0 — see [OpenPhysics org license](https://github.com/OpenPhysics/.github/blob/main/LICENSE). The original simulation is Copyright © Rice University, distributed under the GNU AGPL; this is an
+GNU Affero General Public License v3.0 — see [OpenLyceum org license](https://github.com/OpenLyceum/.github/blob/main/LICENSE). The original simulation is Copyright © Rice University, distributed under the GNU AGPL; this is an
 independent reimplementation.
 
 ## Contributing
 
-See [OpenPhysics contributing guidelines](https://github.com/OpenPhysics/.github/blob/main/CONTRIBUTING.md).
+See [OpenLyceum contributing guidelines](https://github.com/OpenLyceum/.github/blob/main/CONTRIBUTING.md).
 Report bugs via GitHub Issues; use org issue templates.

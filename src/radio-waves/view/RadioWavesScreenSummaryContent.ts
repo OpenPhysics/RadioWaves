@@ -6,7 +6,7 @@
  * "current details" paragraph derived from the model (the transmitter's
  * frequency and amplitude).
  *
- * Follows the OpenPhysics accessibility convention; see the canonical
+ * Follows the OpenLyceum accessibility convention; see the canonical
  * SceneryStackTemplate/SimScreenSummaryContent.ts.
  */
 import { DerivedProperty } from "scenerystack/axon";
